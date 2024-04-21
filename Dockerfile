@@ -2,7 +2,11 @@ FROM openjdk:8-jre-alpine
 
 EXPOSE 8080
 
-COPY ${{ github.workspace }}/build/libs/gradle-wrapper.jar /usr/app/
+# Copy the JAR file from the build directory to the Docker image
+COPY ${GITHUB_WORKSPACE}/build/libs/*.jar /usr/app/my-app.jar
+
+# Set the working directory
 WORKDIR /usr/app
 
-ENTRYPOINT ["java", "-jar", "my-app-1.0-SNAPSHOT.jar"]
+# Command to run the application
+ENTRYPOINT ["java", "-jar", "my-app.jar"]
