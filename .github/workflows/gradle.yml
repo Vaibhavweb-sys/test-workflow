@@ -45,7 +45,7 @@ jobs:
         path: ${{ github.workspace }}/build/libs/${{ steps.find_jar.outputs.jar_name }}
 
     - name: Setup gcloud CLI
-      uses: google-github-actions/setup-gcloud@master
+      uses: google-github-actions/setup-gcloud@v0.2.1
       with:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           project_id: valid-chess-422514-m3
