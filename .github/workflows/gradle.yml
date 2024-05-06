@@ -44,12 +44,21 @@ jobs:
         name: my-artifact
         path: ${{ github.workspace }}/build/libs/${{ steps.find_jar.outputs.jar_name }}
 
-    - name: Setup gcloud CLI
-      uses: google-github-actions/setup-gcloud@v0.2.1
-      with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          project_id: valid-chess-422514-m3
+    # - name: Setup gcloud CLI
+    #   uses: google-github-actions/setup-gcloud@v0.2.1
+    #   with:
+    #       service_account_key: ${{ secrets.GCP_SA_KEY }}
+    #       project_id: valid-chess-422514-m3
       
+    - name: Authenticate with OIDC
+      id: auth
+      uses: some-user/some-oidc-auth-action@v1
+      with:
+       client_id: ${{ secrets.OIDC_CLIENT_ID }}
+       client_secret: ${{ secrets.OIDC_CLIENT_SECRET }}
+
+    - name: Use token
+      run: echo "ID token is ${{ steps.auth.outputs.id_token }}"
     - name: Configure Docker to use the gcloud command-line tool as a credential helper
       run: |
           gcloud --quiet auth configure-docker europe-west2-docker.pkg.dev
