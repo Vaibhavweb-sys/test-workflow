@@ -56,4 +56,4 @@ jobs:
       with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}/testimage:latest
+          tags: ghcr.io/vaibhavweb-sys/test-workflow/testimage:latest
