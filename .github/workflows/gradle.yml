@@ -67,15 +67,19 @@ jobs:
 
     # - name: Use token
     #   run: echo "ID token is ${{ steps.auth.outputs.id_token }}"
+    - name: Authenticate with service account
+      run: |
+        echo '${{ secrets.GCP_SA_KEY }}' > sa_key.json
+        gcloud auth activate-service-account --key-file=sa_key.json
+
     - name: Configure Docker to use the gcloud command-line tool as a credential helper
       run: |
-          gcloud --quiet auth configure-docker europe-west2-docker.pkg.dev
-      
+        gcloud --quiet auth configure-docker europe-west2-docker.pkg.dev
+
     - name: Build and push Docker image
       run: |
-          docker build -t europe-west2-docker.pkg.dev/valid-chess-422514-m3/test-docker-artifact/gartest:latest .
-          docker push europe-west2-docker.pkg.dev/valid-chess-422514-m3/test-docker-artifact/gartest:latest
-
+       docker build -t europe-west2-docker.pkg.dev/valid-chess-422514-m3/test-docker-artifact/gartest:latest .
+       docker push europe-west2-docker.pkg.dev/valid-chess-422514-m3/test-docker-artifact/gartest:latest
     - name: Log in to GitHub Docker Registry
       uses: docker/login-action@v1 
       with:
