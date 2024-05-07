@@ -56,7 +56,7 @@ jobs:
     #       project_id: valid-chess-422514-m3
       
     - name: Authenticate with OIDC
-      #id: auth
+      id: auth
       uses: google-github-actions/auth@v2
       with:
           token_format: access_token
