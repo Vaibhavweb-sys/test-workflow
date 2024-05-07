@@ -51,16 +51,16 @@ jobs:
     #       project_id: valid-chess-422514-m3
       
     - name: Authenticate with OIDC
-      id: auth
-      uses: google-github-actions/auth@35b0e87d162680511bf346c299f71c9c5c379033
+      #id: auth
+      uses: google-github-actions/auth@v2
       with:
           token_format: access_token
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           access_token_lifetime: 600s
 
-    - name: Use token
-      run: echo "ID token is ${{ steps.auth.outputs.id_token }}"
+    # - name: Use token
+    #   run: echo "ID token is ${{ steps.auth.outputs.id_token }}"
     - name: Configure Docker to use the gcloud command-line tool as a credential helper
       run: |
           gcloud --quiet auth configure-docker europe-west2-docker.pkg.dev
