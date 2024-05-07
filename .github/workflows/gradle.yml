@@ -69,7 +69,7 @@ jobs:
     #   run: echo "ID token is ${{ steps.auth.outputs.id_token }}"
     - name: Authenticate with service account
       run: |
-        echo '${{ secrets.GCP_SA_KEY }}' > sa_key.json
+        echo '${{ secrets.GCP_SERVICE_ACCOUNT }}' > sa_key.json
         gcloud auth activate-service-account --key-file=sa_key.json
 
     - name: Configure Docker to use the gcloud command-line tool as a credential helper
