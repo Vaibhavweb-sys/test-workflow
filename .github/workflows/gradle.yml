@@ -12,8 +12,10 @@ on:
         required: false
 
 env:
-  IMAGE_REGISTRY: ${{ github.event.inputs.Image_registry }}
-
+  # Uncomment the following line and replace 'path-to-gar' with the path of your GAR image registry
+  # to push to both GAR and GitHub Artifact Registry.
+  # Leave it commented out to push to only GitHub Artifact Registry.
+  # IMAGE_REGISTRY: path-to-gar
 permissions:
     contents: read
     packages: write
@@ -58,6 +60,7 @@ jobs:
         path: ${{ github.workspace }}/build/libs/${{ steps.find_jar.outputs.jar_name }}
 
     - name: Authenticate with OIDC
+      if: env.IMAGE_REGISTRY != ''
       id: auth
       uses: google-github-actions/auth@v2
       with:
@@ -67,6 +70,7 @@ jobs:
           access_token_lifetime: 600s
 
     - name: Configure Docker to use the gcloud command-line tool as a credential helper
+      if: env.IMAGE_REGISTRY != ''
       run: |
         gcloud --quiet auth configure-docker europe-west2-docker.pkg.dev
 
