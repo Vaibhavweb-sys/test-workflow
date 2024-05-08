@@ -6,10 +6,10 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
-    inputs:
-      Image_registry:
-        description: 'GAR image registry path'
-        required: false
+    # inputs:
+    #   Image_registry:
+    #     description: 'GAR image registry path'
+    #     required: false
 
 #env:
   # Uncomment the following line and replace 'path-to-gar' with the path of your GAR image registry
