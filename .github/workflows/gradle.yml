@@ -6,16 +6,17 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
-     inputs:
-       IMAGE_REGISTRY:
-    #     description: 'GAR image registry path'
-       required: false
+    #  inputs:
+    #    IMAGE_REGISTRY:
+    # #     description: 'GAR image registry path'
+    #      required: false
 
 env:
   # Uncomment the following line and replace 'path-to-gar' with the path of your GAR image registry
   # to push to both GAR and GitHub Artifact Registry.
   # Leave it commented out to push to only GitHub Artifact Registry.
   #IMAGE_REGISTRY: europe-west2-docker.pkg.dev/valid-chess-422514-m3
+  IMAGE_REGISTRY: ''
 permissions:
     contents: read
     packages: write
