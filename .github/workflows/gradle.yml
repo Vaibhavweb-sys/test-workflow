@@ -22,9 +22,11 @@ permissions:
     id-token: write
 
 jobs:
-  build:
+  build-and-push:
 
     runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.push_image_gcr.outputs.Digest }}
     permissions:
       contents: read
       id-token: write
@@ -84,6 +86,7 @@ jobs:
 
     - name: Build and push Docker image to GAR
       if: env.IMAGE_REGISTRY != ''
+      id: push_image_gcr
       run: |
        docker build -t ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:latest .
        docker push ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:latest
