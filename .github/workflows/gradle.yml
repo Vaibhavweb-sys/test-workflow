@@ -92,7 +92,7 @@ jobs:
        docker push ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.DATE }}-${{ env.TIME }}-${{ env.PR_NUMBER }}-${{ github.sha }}
 
     - name: Log in to GitHub Docker Registry
-      if: env.IMAGE_REGISTRY == ''
+      #if: env.IMAGE_REGISTRY == ''
       uses: docker/login-action@v1 
       with:
           registry: ghcr.io
@@ -100,7 +100,7 @@ jobs:
           password: ${{ secrets.REPO_TOKEN }}
 
     - name: Build and push Docker image to GitHub
-      if: env.IMAGE_REGISTRY == ''
+      #if: env.IMAGE_REGISTRY == ''
       uses: docker/build-push-action@v2
       with:
           context: .
