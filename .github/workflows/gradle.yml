@@ -88,8 +88,8 @@ jobs:
       if: env.IMAGE_REGISTRY != ''
       id: push_image_gcr
       run: |
-       docker build -t ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.DATE }}-${{ env.TIME }}-${{ env.PR_NUMBER }}-${{ github.sha }} .
-       docker push ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.DATE }}-${{ env.TIME }}-${{ env.PR_NUMBER }}-${{ github.sha }}
+       docker build -t ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.DATE }}-${{ env.TIME }}-${{ env.PR_NUMBER }} .
+       docker push ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.DATE }}-${{ env.TIME }}-${{ env.PR_NUMBER }}
 
     - name: Log in to GitHub Docker Registry
       #if: env.IMAGE_REGISTRY == ''
@@ -105,4 +105,4 @@ jobs:
       with:
           context: .
           push: true
-          tags: ghcr.io/vaibhavweb-sys/test-workflow/testimage:${{ env.DATE }}-${{ env.TIME }}-${{ env.PR_NUMBER }}-${{ github.sha }}
+          tags: ghcr.io/vaibhavweb-sys/test-workflow/testimage:${{ env.DATE }}-${{ env.TIME }}-${{ env.PR_NUMBER }}
