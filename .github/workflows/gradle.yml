@@ -6,23 +6,19 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
-    inputs:
-      Image_registry:
-        description: 'GAR image registry path'
-        required: false
-
 env:
-  IMAGE_REGISTRY: ${{ github.event.inputs.Image_registry }}
-
+  #IMAGE_REGISTRY: europe-west2-docker.pkg.dev/valid-chess-422514-m3
+  IMAGE_REGISTRY: 'europe-west2-docker.pkg.dev/valid-chess-422514-m3'
 permissions:
     contents: read
     packages: write
-    id-token: write
 
 jobs:
-  build:
+  build-and-push:
 
     runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.push_image_gcr.outputs.Digest }}
     permissions:
       contents: read
       id-token: write
@@ -57,7 +53,24 @@ jobs:
         name: my-artifact
         path: ${{ github.workspace }}/build/libs/${{ steps.find_jar.outputs.jar_name }}
 
+    - name: Cache Gradle packages
+      uses: actions/cache@v2
+      with:
+       path: ~/.gradle/caches
+       key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+       restore-keys: |
+        ${{ runner.os }}-gradle-
+
+    - name: Extract details for tag
+      shell: bash
+      run: |
+        echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
+        echo "TIME=$(date +'%H%M%S')" >> $GITHUB_ENV
+        echo "PR_NUMBER=$(echo ${{ github.event.pull_request.number }} | sed 's/[^0-9]*//g')" >> $GITHUB_ENV
+          
+          
     - name: Authenticate with OIDC
+      if: env.IMAGE_REGISTRY != ''
       id: auth
       uses: google-github-actions/auth@v2
       with:
@@ -67,17 +80,19 @@ jobs:
           access_token_lifetime: 600s
 
     - name: Configure Docker to use the gcloud command-line tool as a credential helper
+      if: env.IMAGE_REGISTRY != ''
       run: |
         gcloud --quiet auth configure-docker europe-west2-docker.pkg.dev
 
     - name: Build and push Docker image to GAR
       if: env.IMAGE_REGISTRY != ''
+      id: push_image_gcr
       run: |
-       docker build -t ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:latest .
-       docker push ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:latest
+       docker build -t ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.DATE }}-${{ env.TIME }}-${{ env.PR_NUMBER }} .
+       docker push ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.DATE }}-${{ env.TIME }}-${{ env.PR_NUMBER }}
 
     - name: Log in to GitHub Docker Registry
-      if: env.IMAGE_REGISTRY == ''
+      #if: env.IMAGE_REGISTRY == ''
       uses: docker/login-action@v1 
       with:
           registry: ghcr.io
@@ -85,9 +100,9 @@ jobs:
           password: ${{ secrets.REPO_TOKEN }}
 
     - name: Build and push Docker image to GitHub
-      if: env.IMAGE_REGISTRY == ''
+      #if: env.IMAGE_REGISTRY == ''
       uses: docker/build-push-action@v2
       with:
           context: .
           push: true
-          tags: ghcr.io/vaibhavweb-sys/test-workflow/testimage:latest
+          tags: ghcr.io/vaibhavweb-sys/test-workflow/testimage:${{ env.DATE }}-${{ env.TIME }}-${{ env.PR_NUMBER }}
