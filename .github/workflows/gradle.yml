@@ -61,6 +61,14 @@ jobs:
        restore-keys: |
         ${{ runner.os }}-gradle-
 
+    - name: Extract details for tag
+      shell: bash
+      run: |
+        echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
+        echo "TIME=$(date +'%H%M%S')" >> $GITHUB_ENV
+        echo "PR_NUMBER=$(echo ${{ github.event.pull_request.number }} | sed 's/[^0-9]*//g')" >> $GITHUB_ENV
+          
+          
     - name: Authenticate with OIDC
       if: env.IMAGE_REGISTRY != ''
       id: auth
@@ -80,8 +88,8 @@ jobs:
       if: env.IMAGE_REGISTRY != ''
       id: push_image_gcr
       run: |
-       docker build -t ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:latest .
-       docker push ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:latest
+       docker build -t ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.DATE }}-${{ env.TIME }}-${{ env.PR_NUMBER }}-${{ github.sha }} .
+       docker push ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.DATE }}-${{ env.TIME }}-${{ env.PR_NUMBER }}-${{ github.sha }}
 
     - name: Log in to GitHub Docker Registry
       if: env.IMAGE_REGISTRY == ''
@@ -97,4 +105,4 @@ jobs:
       with:
           context: .
           push: true
-          tags: ghcr.io/vaibhavweb-sys/test-workflow/testimage:latest
+          tags: ghcr.io/vaibhavweb-sys/test-workflow/testimage:${{ env.DATE }}-${{ env.TIME }}-${{ env.PR_NUMBER }}-${{ github.sha }}
