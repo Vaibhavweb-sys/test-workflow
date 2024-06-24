@@ -70,7 +70,8 @@ jobs:
 
     - name: Combine values
       run: |
-              echo "custom_tag=${{ env.DATE }}-${{ env.TIME }}-branch_name${{ env.MERGED_NAME }}-${{ env.COMMIT_ID }}" >> $GITHUB_ENV > custom_tag.txt
+              echo "custom_tag=${{ env.DATE }}-${{ env.TIME }}-branch_name${{ env.MERGED_NAME }}-${{ env.COMMIT_ID }}" >> $GITHUB_ENV
+              echo "custom_tag1=${{ env.DATE }}-${{ env.TIME }}-branch_name${{ env.MERGED_NAME }}-${{ env.COMMIT_ID }}" > custom_tag.txt
 
            
     - name: Authenticate with OIDC
