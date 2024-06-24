@@ -66,7 +66,7 @@ jobs:
             echo "TIME=$(date +'%H%M%S')" >> $GITHUB_ENV
             echo "COMMIT_ID=$(echo ${GITHUB_SHA::7})" >> $GITHUB_ENV
             #echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF:-$(echo ${{ github.ref }} | sed 's/refs\/heads\///g')})" >> $GITHUB_ENV
-            echo "MERGED_BRANCH=$(git log -1 --pretty=%B | awk '/Merge pull request/ {print $4}' | cut -d'/' -f3)" >> $GITHUB_ENV
+            echo "MERGED_BRANCH=$(git log -1 --pretty=%B | awk '/Merge pull request/ {print $4}' | cut -d'/' -f4)" >> $GITHUB_ENV
             
     - name: Authenticate with OIDC
       if: env.IMAGE_REGISTRY != ''
