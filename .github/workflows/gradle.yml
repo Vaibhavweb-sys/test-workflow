@@ -67,7 +67,12 @@ jobs:
             echo "COMMIT_ID=$(echo ${GITHUB_SHA::7})" >> $GITHUB_ENV
             #echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF:-$(echo ${{ github.ref }} | sed 's/refs\/heads\///g')})" >> $GITHUB_ENV
             echo "MERGED_BRANCH=$(git log -1 --pretty=%B | awk '/Merge pull request/ {print $6}' | cut -d'/' -f2)" >> $GITHUB_ENV
-            
+
+    - name: Combine values
+      run: |
+              echo "custom_tag=${{ env.DATE }}-${{ env.TIME }}-branch_name${{ env.MERGED_NAME }}-${{ env.COMMIT_ID }}" >> $GITHUB_ENV > custom_tag.txt
+
+           
     - name: Authenticate with OIDC
       if: env.IMAGE_REGISTRY != ''
       id: auth
@@ -87,8 +92,8 @@ jobs:
       if: env.IMAGE_REGISTRY != ''
       id: push_image_gcr
       run: |
-        docker build -t ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.DATE }}-${{ env.TIME }}-${{ env.MERGED_BRANCH }}-${{ env.COMMIT_ID }} .
-        docker push ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.DATE }}-${{ env.TIME }}-${{ env.MERGED_BRANCH }}-${{ env.COMMIT_ID }}
+        docker build -t ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.custom_tag}} .
+        docker push ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:{{ env.custom_tag}}
 
     - name: Log in to GitHub Docker Registry
       uses: docker/login-action@v1 
@@ -102,4 +107,10 @@ jobs:
       with:
           context: .
           push: true
-          tags: ghcr.io/vaibhavweb-sys/test-workflow/testimage:${{ env.DATE }}-${{ env.TIME }}-branch_name${{ env.MERGED_NAME }}-${{ env.COMMIT_ID }}
+          tags: ghcr.io/vaibhavweb-sys/test-workflow/testimage:{{ env.custom_tag}}
+
+    - name: Upload combined value
+      uses: actions/upload-artifact@v2
+      with:
+         name: custom_tag
+         path: custom_tag.txt
