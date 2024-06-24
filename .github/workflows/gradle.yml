@@ -68,11 +68,9 @@ jobs:
             #echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF:-$(echo ${{ github.ref }} | sed 's/refs\/heads\///g')})" >> $GITHUB_ENV
             echo "MERGED_BRANCH=$(git log -1 --pretty=%B | awk '/Merge pull request/ {print $6}' | cut -d'/' -f2)" >> $GITHUB_ENV
 
-    - name: Combine values
+    - name: Create custom tag
       run: |
-              echo "custom_tag=${{ env.DATE }}-${{ env.TIME }}-branch_name${{ env.MERGED_NAME }}-${{ env.COMMIT_ID }}" >> $GITHUB_ENV
-              echo "custom_tag1=${{ env.DATE }}-${{ env.TIME }}-branch_name${{ env.MERGED_NAME }}-${{ env.COMMIT_ID }}" > custom_tag.txt
-
+       echo "custom_tag=${{ env.DATE }}-${{ env.TIME }}-branch_name${{ env.MERGED_NAME }}-${{ env.COMMIT_ID }}" | tee >(cat >> $GITHUB_ENV) > custom_tag.txt
            
     - name: Authenticate with OIDC
       if: env.IMAGE_REGISTRY != ''
