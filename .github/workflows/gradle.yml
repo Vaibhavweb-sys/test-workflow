@@ -93,7 +93,7 @@ jobs:
       id: push_image_gcr
       run: |
         docker build -t ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.custom_tag}} .
-        docker push ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:{{ env.custom_tag}}
+        docker push ${{ env.IMAGE_REGISTRY }}/test-docker-artifact/gartest:${{ env.custom_tag}}
 
     - name: Log in to GitHub Docker Registry
       uses: docker/login-action@v1 
