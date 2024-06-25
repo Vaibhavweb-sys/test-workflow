@@ -20,7 +20,9 @@ jobs:
     permissions:
       contents: read
       id-token: write
-
+      
+    env:
+      GH_TOKEN: ${{ secrets.GHTEST_TOKEN }}
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 1.8
