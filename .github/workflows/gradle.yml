@@ -7,6 +7,7 @@ on:
 
 env:
   IMAGE_REGISTRY: 'europe-west2-docker.pkg.dev/valid-chess-422514-m3'
+  GH_TOKEN: ${{ github.token }}
 
 permissions:
   contents: read
