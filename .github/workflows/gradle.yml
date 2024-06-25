@@ -22,7 +22,7 @@ jobs:
       id-token: write
       
     env:
-      GH_TOKEN: ${{ secrets.GHTEST_TOKEN }}
+      GH_TOKEN: ${{ github.token }}
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 1.8
@@ -74,7 +74,7 @@ jobs:
 
     - name: Create custom tag
       run: |
-       echo "custom_tag=${{ env.DATE }}-${{ env.TIME }}-PR${{ env.PR_NUMBER }}-branch${{ env.PR_BRANCH }}-${{ env.COMMIT_ID }}" | tee >(cat >> $GITHUB_ENV) > custom_tag.txt
+       echo "custom_tag=${{ env.DATE }}-${{ env.TIME }}-PR${{ env.PR_NUMBER }}-branch_name${{ env.PR_BRANCH }}-${{ env.COMMIT_ID }}" | tee >(cat >> $GITHUB_ENV) > custom_tag.txt
            
     - name: Authenticate with OIDC
       if: env.IMAGE_REGISTRY != ''
