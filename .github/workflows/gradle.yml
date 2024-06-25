@@ -65,12 +65,14 @@ jobs:
             echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
             echo "TIME=$(date +'%H%M%S')" >> $GITHUB_ENV
             echo "COMMIT_ID=$(echo ${GITHUB_SHA::7})" >> $GITHUB_ENV
-            #echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF:-$(echo ${{ github.ref }} | sed 's/refs\/heads\///g')})" >> $GITHUB_ENV
-            echo "MERGED_BRANCH=$(git log -1 --pretty=%B | awk '/Merge pull request/ {print $6}' | cut -d'/' -f2)" >> $GITHUB_ENV
+            PR_NUMBER=$(gh pr list --repo ${{ github.repository }} --state merged --search "${GITHUB_SHA}" --json number --jq '.[0].number')
+            PR_BRANCH=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json headRefName --jq '.headRefName')
+            echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+            echo "PR_BRANCH=$PR_BRANCH" >> $GITHUB_ENV
 
     - name: Create custom tag
       run: |
-       echo "custom_tag=${{ env.DATE }}-${{ env.TIME }}-branch_name${{ env.MERGED_NAME }}-${{ env.COMMIT_ID }}" | tee >(cat >> $GITHUB_ENV) > custom_tag.txt
+       echo "custom_tag=${{ env.DATE }}-${{ env.TIME }}-PR${{ env.PR_NUMBER }}-branch${{ env.PR_BRANCH }}-${{ env.COMMIT_ID }}" | tee >(cat >> $GITHUB_ENV) > custom_tag.txt
            
     - name: Authenticate with OIDC
       if: env.IMAGE_REGISTRY != ''
