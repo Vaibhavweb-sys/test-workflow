@@ -7,7 +7,6 @@ on:
 
 env:
   IMAGE_REGISTRY: 'europe-west2-docker.pkg.dev/valid-chess-422514-m3'
-  GH_TOKEN: ${{ github.token }}
 
 permissions:
   contents: read
@@ -21,7 +20,9 @@ jobs:
     permissions:
       contents: read
       id-token: write
-
+      
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 1.8
