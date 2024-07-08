@@ -69,7 +69,7 @@ jobs:
             echo "COMMIT_ID=$(echo ${GITHUB_SHA::7})" >> $GITHUB_ENV
             PR_NUMBER=$(gh pr list --repo ${{ github.repository }} --state merged --search "${GITHUB_SHA}" --json number --jq '.[0].number')
             #PR_BRANCH=$(gh pr view $PR_NUMBER --repo ${{ github.repository }} --json headRefName --jq '.headRefName')
-            echo "PR_BRANCH=$(git log -1 --pretty=%B | awk '/Merge pull request/ {print $NF}' | cut -d'/' -f2-)" >> $GITHUB_ENV
+            PR_BRANCH=$(git log -1 --pretty=%B | awk '/Merge pull request/ {print $NF}' | cut -d'/' -f2-)
             echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
             echo "PR_BRANCH=$PR_BRANCH" >> $GITHUB_ENV
 
