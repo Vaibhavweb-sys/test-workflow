@@ -1,0 +1,36 @@
+Update build-and-push Workflow:
+
+Output: Change the output name to something different from docker_image_tag to avoid confusion. This output will hold the actual image tag built during this workflow. Here's an example:
+YAML
+jobs:
+  build-and-push:
+    outputs:
+      built_image_tag: ${{ steps.create_custom_tag.outputs.custom_tag }}
+      # ... other outputs
+Use code with caution.
+Optional (for clarity): You can add an additional output for default_image_tag if you want to explicitly define the default value used within this workflow.
+2. Update deploy-to-non-prod-tech-enablement Workflow:
+
+Input: Keep the input name as docker_image_tag. This will be used to override the default value.
+Conditional Logic: Inside the deploy-to-non-prod-tech-enablement workflow, check if the docker_image_tag input is provided. If yes, use that value for deployment. Otherwise, use the output (built_image_tag) from the build-and-push workflow. Here's an example:
+YAML
+jobs:
+  deploy-to-non-prod-tech-enablement:
+    needs:
+      - build-and-push
+    with:
+      # ... other inputs
+      docker_image_name: te-anthos-troubleshooting-app
+      docker_image_tag: ${{ if eq(github.event.inputs.docker_image_tag, '') then needs.build-and-push.outputs.built_image_tag else github.event.inputs.docker_image_tag endif }}
+      # ... other inputs
+Use code with caution.
+This conditional logic checks if the docker_image_tag input from the triggering workflow is empty. If empty, it uses the built_image_tag output from the build-and-push workflow. Otherwise, it uses the provided docker_image_tag input value.
+
+Template Usage:
+
+In your deployment template (e.g., kustomization or Helm chart), you can reference the docker_image_tag input within your container definition. This will ensure that the correct image tag (either the default built tag or the custom tag provided) is used during deployment.
+Benefits:
+
+Clear separation of concerns: The build-and-push workflow determines the built image tag, while the deploy-to-non-prod-tech-enablement workflow handles overriding with a custom tag if needed.
+Flexibility: You can still leverage the default tag for deployments triggered without any specific image tag requirement.
+Remember to adjust the variable names and paths according to your specific workflow configuration.
