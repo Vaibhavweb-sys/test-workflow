@@ -1,0 +1,40 @@
+name: Build, push & deploy
+on: 
+ push:
+  branches:
+   - main
+  paths-ignore:
+   - 'k8s/**' # This workflow MUST NOT trigger when changes are made to the kubernetes manifests folder
+
+workflow_dispatch:  
+
+permissions:
+ contents: read
+ packages: write
+ id-token: write
+
+jobs:
+ build-and-push:
+  uses: frasers-group/te-reusable-workflows-devops/.github/workflows/build-and-push-container-registry.yml@TE-7480
+  with:
+   docker_image_name: te-anthos-troubleshooting-app
+   docker_image_tag: ${{ github.sha }}
+   dockerfile_path: ./Dockerfile
+   build_context: "." # Generally this is the folder containing the Dockerfile
+   team_prefix: common
+   
+ deploy-to-non-prod-tech-enablement:
+   name: Deploy to non-prod-tech-enablement
+   needs: 
+    - build-and-push
+   uses: frasers-group/te-reusable-workflows-devops/.github/workflows/cd-anthos-gcp-secrets.yml@TE-7480
+   with:
+    environment: dev # this should match the name of the Github environment to deploy to
+    image-digest: ${{ needs.build-and-push.outputs.IMAGE_DIGEST }}
+    kustomization-path: k8s/overlays/non-prod-tech-enablement # append the name of the environment specific overlays folder
+    branch: main # set to the branch which is being synced to ArgoCD
+    service_account_prefix: te-argo # SA to obtain GCP secrets for Github App
+    team_prefix: common
+    docker_image_name: te-anthos-troubleshooting-app
+    gar-image-digest: ${{ needs.build-and-push.outputs.GAR_IMAGE_DIGEST }}
+    docker_image_tag: ${{ inputs.docker_image_tag || needs.build-and-push.outputs.DOCKER_IMAGE_TAG }}
