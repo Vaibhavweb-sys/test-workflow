@@ -11,6 +11,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Create a new branch
+        run: |
+          git checkout -b feature-branch
+          echo "This is a new line added by the workflow." >> README.txt
+          git add README.txt
+          git commit -m "Add new line to README.txt"
+          git push origin feature-branch
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
@@ -18,5 +26,5 @@ jobs:
           commit-message: Add new feature
           branch: feature-branch
           base: main
-          title: 'New Feature PR'
-          body: 'This PR adds a new feature.'
+          title: 'Update README.txt'
+          body: 'This PR adds a new line to the README.txt file.'
