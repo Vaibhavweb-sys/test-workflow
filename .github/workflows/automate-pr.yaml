@@ -11,12 +11,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Set up Git user
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+
       - name: Create a new branch
         run: |
           git checkout -b feature-branch
-          echo "This is a new line added by the workflow." >> README.md
-          git add README.md
-          git commit -m "Add new line to README.md"
+          echo "This is a new line added by the workflow." >> README.txt
+          git add README.txt
+          git commit -m "Add new line to README.txt"
           git push origin feature-branch
 
       - name: Create Pull Request
@@ -26,5 +31,5 @@ jobs:
           commit-message: Add new feature
           branch: feature-branch
           base: main
-          title: 'Update README.md'
-          body: 'This PR adds a new line to the README.md file.'
+          title: 'Update README.txt'
+          body: 'This PR adds a new line to the README.txt file.'
