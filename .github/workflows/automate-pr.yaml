@@ -22,12 +22,12 @@ jobs:
           echo "This is a new line added by the workflow." >> README.txt
           git add README.txt
           git commit -m "Add new line to README.txt"
-          git push origin feature-branch
+          git push https://x-access-token:${{ secrets.PAT }}@github.com/Vaibhavweb-sys/test-workflow.git feature-branch
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
           commit-message: Add new feature
           branch: feature-branch
           base: main
