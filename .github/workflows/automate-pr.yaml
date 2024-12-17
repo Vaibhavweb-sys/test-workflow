@@ -1,0 +1,22 @@
+name: Create PR on Dispatch
+
+on:
+  repository_dispatch:
+    types: [create-pr]
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Add new feature
+          branch: feature-branch
+          base: main
+          title: 'New Feature PR'
+          body: 'This PR adds a new feature.'
