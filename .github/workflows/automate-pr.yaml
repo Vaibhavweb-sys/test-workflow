@@ -14,9 +14,9 @@ jobs:
       - name: Create a new branch
         run: |
           git checkout -b feature-branch
-          echo "This is a new line added by the workflow." >> README.txt
-          git add README.txt
-          git commit -m "Add new line to README.txt"
+          echo "This is a new line added by the workflow." >> README.md
+          git add README.md
+          git commit -m "Add new line to README.md"
           git push origin feature-branch
 
       - name: Create Pull Request
@@ -26,5 +26,5 @@ jobs:
           commit-message: Add new feature
           branch: feature-branch
           base: main
-          title: 'Update README.txt'
-          body: 'This PR adds a new line to the README.txt file.'
+          title: 'Update README.md'
+          body: 'This PR adds a new line to the README.md file.'
