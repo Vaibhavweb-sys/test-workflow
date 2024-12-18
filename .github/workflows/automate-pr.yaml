@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
 
@@ -18,7 +18,12 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
 
-      - name: Create a new branch
+      - name: Fetch and pull remote branches
+        run: |
+          git fetch --prune --unshallow
+          git pull origin main
+
+      - name: Create and push a new branch
         run: |
           git checkout -b feature-branch
           echo "This is a new line added by the workflow." >> README.txt
@@ -30,8 +35,8 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.PAT }}
-          commit-message: Add new feature
+          commit-message: "Add new feature"
           branch: feature-branch
           base: main
-          title: 'Update README.txt'
-          body: 'This PR adds a new line to the README.txt file.'
+          title: "Update README.txt"
+          body: "This PR adds a new line to the README.txt file."
