@@ -18,18 +18,25 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
 
-      - name: Fetch and pull remote branches
-        run: |
-          git fetch --prune --unshallow
-          git pull origin main
+      - name: Fetch all remote branches
+        run: git fetch --prune --unshallow
 
       - name: Create and push a new branch
         run: |
+          # Create a new branch
           git checkout -b feature-branch
           echo "This is a new line added by the workflow." >> README.txt
           git add README.txt
           git commit -m "Add new line to README.txt"
+
+          # Push the new branch to the remote repository
           git push https://x-access-token:${{ secrets.PAT }}@github.com/Vaibhavweb-sys/test-workflow.git feature-branch
+
+      - name: Verify remote branch existence
+        run: |
+          # Ensure the remote branch exists
+          git fetch origin feature-branch
+          git branch -r
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
