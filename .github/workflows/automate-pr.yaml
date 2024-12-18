@@ -8,23 +8,32 @@ jobs:
   create-pr:
     runs-on: ubuntu-latest
     steps:
+      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
 
+      # 2. Set up Git user
       - name: Set up Git user
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
 
-      - name: Fetch all remote branches
-        run: git fetch --prune --unshallow
+      # 3. Fetch latest main branch
+      - name: Fetch latest main
+        run: |
+          git fetch --prune --unshallow
+          git checkout main
+          git pull origin main
 
+      # 4. Create and push a new branch
       - name: Create and push a new branch
         run: |
           # Create a new branch
           git checkout -b feature-branch
+
+          # Add a new line to README.md
           echo "This is a new line added by the workflow." >> README.md
           git add README.md
           git commit -m "Add new line to README.md"
@@ -32,12 +41,7 @@ jobs:
           # Push the new branch to the remote repository
           git push https://x-access-token:${{ secrets.PAT }}@github.com/Vaibhavweb-sys/test-workflow.git feature-branch
 
-      - name: Verify remote branch existence
-        run: |
-          # Ensure the remote branch exists
-          git fetch origin feature-branch
-          git branch -r
-
+      # 5. Create Pull Request
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
