@@ -19,11 +19,31 @@ jobs:
           git checkout main
           git pull origin main
 
-      # Step 3: Create and push a new branch
+      # Step 3: Install GitHub CLI
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+          sudo apt-add-repository https://cli.github.com/packages
+          sudo apt update
+          sudo apt install gh
+
+      # Step 4: Authenticate GitHub CLI
+      - name: Authenticate GitHub CLI
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh auth login --with-token <<< "$GITHUB_TOKEN"
+
+      # Step 5: Create and push a new branch using gh CLI
       - name: Create and push new branch
         run: |
           # Create the feature branch
-          git checkout -b feature-branch
+          gh repo clone ${{ github.repository }} repo
+          cd repo
+          gh repo set-default
+          gh repo fork --remote
+          gh pr checkout main
+          gh pr create-branch feature-branch
 
           # Add a new line to README.md
           echo "This is a new line added by the workflow using gh CLI." >> README.md
@@ -32,21 +52,6 @@ jobs:
 
           # Push the branch to remote
           git push -u origin feature-branch
-
-      # Step 4: Install GitHub CLI
-      - name: Install GitHub CLI
-        run: |
-          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
-          sudo apt-add-repository https://cli.github.com/packages
-          sudo apt update
-          sudo apt install gh
-
-      # Step 5: Authenticate GitHub CLI
-      - name: Authenticate GitHub CLI
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh auth login --with-token <<< "$GITHUB_TOKEN"
 
       # Step 6: Create Pull Request using gh CLI
       - name: Create Pull Request
