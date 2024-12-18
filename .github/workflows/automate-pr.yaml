@@ -1,4 +1,4 @@
-name: Create PR on Dispatch
+name: Create PR with gh CLI
 
 on:
   repository_dispatch:
@@ -11,44 +11,33 @@ jobs:
       # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.PAT }}
 
-      # Step 2: Set up Git user
-      - name: Set up Git user
-        run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-
-      # Step 3: Pull the latest code from main
+      # Step 2: Pull latest changes
       - name: Pull latest from main
         run: |
           git fetch --prune --unshallow
           git checkout main
           git pull origin main
 
-      # Step 4: Create and push the new branch
-      - name: Create and push a new branch
+      # Step 3: Create and push a new branch
+      - name: Create and push new branch
         run: |
           # Create the feature branch
           git checkout -b feature-branch
 
           # Add a new line to README.md
-          echo "This is a new line added by the workflow." >> README.md
+          echo "This is a new line added by the workflow using gh CLI." >> README.md
           git add README.md
           git commit -m "Add new line to README.md"
 
           # Push the branch to remote
-          git push -u https://x-access-token:${{ secrets.PAT }}@github.com/Vaibhavweb-sys/test-workflow.git feature-branch
+          git push -u origin feature-branch
 
-      # Step 5: Create the pull request
+      # Step 4: Create Pull Request using gh CLI
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.PAT }}
-          commit-message: "Add new feature"
-          branch: feature-branch
-          base: main
-          delete-branch: true
-          title: "Update README.md"
-          body: "This PR adds a new line to the README.md file."
+        run: |
+          gh pr create \
+            --title "Update README.md" \
+            --body "This PR adds a new line to the README.md file." \
+            --head feature-branch \
+            --base main
