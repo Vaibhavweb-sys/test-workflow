@@ -24,13 +24,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
         run: |
-          # Create the feature branch
-          gh repo clone ${{ github.repository }} repo
-          cd repo
-          gh repo set-default
-          gh repo fork --remote
-          gh pr checkout main
-          gh pr create-branch feature-branch
+          # Create a new feature branch (no need to clone or set repo default)
+          git checkout -b feature-branch
 
           # Add a new line to README.md
           echo "This is a new line added by the workflow using gh CLI." >> README.md
