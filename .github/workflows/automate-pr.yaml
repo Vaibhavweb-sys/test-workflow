@@ -5,8 +5,8 @@ on:
     types: [create-pr]
 
 permissions:
-  contents: write  # Allow the workflow to push changes to the repository
-  pull-requests: write  # Allow the workflow to create pull requests
+  contents: write       # Allows push access to repository
+  pull-requests: write  # Allows creating pull requests
 
 jobs:
   create-pr:
