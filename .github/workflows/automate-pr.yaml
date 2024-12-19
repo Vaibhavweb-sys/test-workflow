@@ -4,6 +4,10 @@ on:
   repository_dispatch:
     types: [create-pr]
 
+permissions:
+  contents: write  # Allow the workflow to push changes to the repository
+  pull-requests: write  # Allow the workflow to create pull requests
+
 jobs:
   create-pr:
     runs-on: ubuntu-latest
