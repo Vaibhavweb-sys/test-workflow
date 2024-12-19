@@ -19,14 +19,7 @@ jobs:
           git checkout main
           git pull origin main
 
-      # Step 4: Authenticate GitHub CLI
-      - name: Authenticate GitHub CLI
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh auth login --with-token <<< $GITHUB_TOKEN
-
-      # Step 5: Create and push a new branch using gh CLI
+      # Step 3: Create and push a new branch using gh CLI
       - name: Create and push new branch
         run: |
           # Create the feature branch
@@ -45,10 +38,8 @@ jobs:
           # Push the branch to remote
           git push -u origin feature-branch
 
-      # Step 6: Create Pull Request using gh CLI
+      # Step 4: Create Pull Request using gh CLI
       - name: Create Pull Request
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr create \
             --title "Update README.md" \
