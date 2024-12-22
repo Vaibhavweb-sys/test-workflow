@@ -49,8 +49,9 @@ jobs:
         run: |
           # Get the current date and time for the PR body
           DATE=$(date +"%Y-%m-%d %H:%M:%S")
+          
           gh pr create \
-             --title "Update README.md with date and time" \
+            --title "Update README.md with date and time" \
             --body "This PR adds a new line to the README.md file with the date and time: $DATE. Branch got created from storyblock." \
             --head feature-branch-$DATE \
             --base main
