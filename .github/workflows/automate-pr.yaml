@@ -30,24 +30,27 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
         run: |
-          # Create a new feature branch
-          git checkout -b feature-branch
+          # Get the current date and time
+          DATE=$(date +"%Y-%m-%d-%H-%M-%S")
+          # Create a new feature branch with the current date
+          git checkout -b feature-branch-$DATE
 
           # Add a new line to README.md
-          echo "This is a new line added by the workflow using git." >> README.md
+          echo "Branch got created from storyblock on $DATE" >> README.md
           git add README.md
-          git commit -m "Add new line to README.md"
+          git commit -m "Add new line to README.md with date and time"
 
           # Push the branch to remote
-          git push -u origin feature-branch
-
+          git push -u origin feature-branch-$DATE
       # Step 5: Create Pull Request using gh CLI
       - name: Create Pull Request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
         run: |
+          # Get the current date and time for the PR body
+          DATE=$(date +"%Y-%m-%d %H:%M:%S")
           gh pr create \
-            --title "Update README.md" \
-            --body "This PR adds a new line to the README.md file." \
-            --head feature-branch \
+             --title "Update README.md with date and time" \
+            --body "This PR adds a new line to the README.md file with the date and time: $DATE. Branch got created from storyblock." \
+            --head feature-branch-$DATE \
             --base main
