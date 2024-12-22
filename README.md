@@ -10,3 +10,4 @@
 
     docker tag java-app demo-app:java-1.0
     
+This is a new line added by the workflow using git.
