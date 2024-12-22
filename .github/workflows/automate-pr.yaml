@@ -52,6 +52,6 @@ jobs:
           
           gh pr create \
             --title "Update README.md with date and time" \
-            --body "This PR adds a new line to the README.md file with the date and time: $DATE. Branch got created from storyblock." \
+            --body "This PR adds a new line to the README.md file with the date and time: \"$DATE\". Branch got created from storyblock." \
             --head feature-branch-$DATE \
             --base main
