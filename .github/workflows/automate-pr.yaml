@@ -19,13 +19,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      # Step 3: Configure git user name and email
+      # Step 2: Configure git user name and email
       - name: Configure Git user
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "github-actions"
 
-      # Step 4: Create and push a new branch using git
+      # Step 3: Create and push a new branch using git
       - name: Create and push new branch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
@@ -42,6 +42,12 @@ jobs:
 
           # Push the branch to remote
           git push -u origin feature-branch-$DATE
+
+      # Step 4: Ensure the latest branch references are fetched
+      - name: Fetch latest branches
+        run: |
+          git fetch --all
+
       # Step 5: Create Pull Request using gh CLI
       - name: Create Pull Request
         env:
@@ -50,8 +56,9 @@ jobs:
           # Get the current date and time for the PR body
           DATE=$(date +"%Y-%m-%d-%H-%M-%S")
           
+          # Create the PR with gh CLI
           gh pr create \
             --title "Update README.md with date and time" \
-             --body "This PR adds a new line to the README.md file with the date and time: $DATE. Branch got created from storyblock." \
+            --body "This PR adds a new line to the README.md file with the date and time: $DATE. Branch got created from storyblock." \
             --head feature-branch-$DATE \
             --base main
