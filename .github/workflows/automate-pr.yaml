@@ -24,7 +24,7 @@ jobs:
       # Step 2: Set the date
       - name: Set date
         id: set-date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
+        run: echo "date=$(date +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
 
       # Step 3: Configure git user name and email
       - name: Configure Git user
@@ -34,11 +34,8 @@ jobs:
 
       # Step 4: Create and push a new branch using git
       - name: Create and push new branch
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
-          DATE: ${{ needs.create-pr.outputs.date }}  # Use job output
         run: |
-          # Debugging: Print out the date value
+          DATE=${{ env.date }}  # Retrieve date from environment variable
           echo "Branch Date: $DATE"
           
           # Create a new feature branch with the current date
@@ -56,38 +53,10 @@ jobs:
           # Push the branch to remote
           git push -u origin feature-branch-$DATE
 
-      # Step 5: Ensure the latest branches are fetched
-      - name: Fetch latest branches
+      # Step 5: Create Pull Request using gh CLI
+      - name: Create Pull Request
         run: |
-          git fetch --all
-          
-      # Step 6: Check remote branches to verify push
-      - name: List remote branches
-        run: |
-          git branch -r
-
-      # Step 7: Ensure feature branch is fetched correctly
-        env:
-          DATE: ${{ needs.create-pr.outputs.date }}  # Use job output
-        run: |
-          echo "Feature branch: feature-branch-$DATE"
-          git fetch origin feature-branch-$DATE
-          git branch -r
-
-      # Step 8: Check commit differences between main and feature branch
-        env:
-          DATE: ${{ needs.create-pr.outputs.date }}  # Use job output
-        run: |
-          git fetch origin main  # Fetch the latest main branch
-          git checkout feature-branch-$DATE  # Ensure we're on the feature branch
-          git log --oneline main..feature-branch-$DATE  # Show the difference in commits
-
-      # Step 9: Create Pull Request using gh CLI
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
-          DATE: ${{ needs.create-pr.outputs.date }}  # Use job output
-        run: |
-          # Create the PR with gh CLI
+          DATE=${{ env.date }}  # Retrieve date from environment variable
           gh pr create \
             --title "Update README.md with date and time" \
             --body "This PR adds a new line to the README.md file with the date and time: $DATE. Branch got created from storyblock." \
