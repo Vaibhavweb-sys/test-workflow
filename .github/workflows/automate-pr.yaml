@@ -11,28 +11,32 @@ permissions:
 jobs:
   create-pr:
     runs-on: ubuntu-latest
+    env:
+      DATE: ${{ steps.set-date.outputs.date }}  # Set DATE as a job-level environment variable
     steps:
       # Step 1: Checkout the repository
       - name: Checkout repository
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608  # v4.1.0
+        uses: actions/checkout@v4.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      # Step 2: Configure git user name and email
+      # Step 2: Set the date
+      - name: Set date
+        id: set-date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
+
+      # Step 3: Configure git user name and email
       - name: Configure Git user
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "github-actions"
 
-      # Step 3: Create and push a new branch using git
+      # Step 4: Create and push a new branch using git
       - name: Create and push new branch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
         run: |
-          # Get the current date and time
-          DATE=$(date +"%Y-%m-%d-%H-%M-%S")
-          
           # Debugging: Print out the date value
           echo "Branch Date: $DATE"
           
@@ -51,38 +55,35 @@ jobs:
           # Push the branch to remote
           git push -u origin feature-branch-$DATE
 
-      # Step 4: Ensure the latest branches are fetched
+      # Step 5: Ensure the latest branches are fetched
       - name: Fetch latest branches
         run: |
           git fetch --all
           
-      # Step 5: Check remote branches to verify push
+      # Step 6: Check remote branches to verify push
       - name: List remote branches
         run: |
           git branch -r
 
-      # Step 6: Ensure feature branch is fetched correctly
+      # Step 7: Ensure feature branch is fetched correctly
       - name: Ensure feature branch exists
         run: |
           echo "Feature branch: feature-branch-$DATE"
           git fetch origin feature-branch-$DATE
           git branch -r
 
-      # Step 7: Check commit differences between main and feature branch
+      # Step 8: Check commit differences between main and feature branch
       - name: Check commit differences between main and feature branch
         run: |
           git fetch origin main  # Fetch the latest main branch
           git checkout feature-branch-$DATE  # Ensure we're on the feature branch
           git log --oneline main..feature-branch-$DATE  # Show the difference in commits
 
-      # Step 8: Create Pull Request using gh CLI
+      # Step 9: Create Pull Request using gh CLI
       - name: Create Pull Request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
         run: |
-          # Get the current date and time for the PR body
-          DATE=$(date +"%Y-%m-%d-%H-%M-%S")
-          
           # Create the PR with gh CLI
           gh pr create \
             --title "Update README.md with date and time" \
