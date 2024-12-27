@@ -32,6 +32,10 @@ jobs:
         run: |
           # Get the current date and time
           DATE=$(date +"%Y-%m-%d-%H-%M-%S")
+          
+          # Debugging: Print out the date value
+          echo "Branch Date: $DATE"
+          
           # Create a new feature branch with the current date
           git checkout -b feature-branch-$DATE
 
@@ -57,9 +61,10 @@ jobs:
         run: |
           git branch -r
 
-      # Step 6: Ensure the feature branch exists on remote
+      # Step 6: Ensure feature branch is fetched correctly
       - name: Ensure feature branch exists
         run: |
+          echo "Feature branch: feature-branch-$DATE"
           git fetch origin feature-branch-$DATE
           git branch -r
 
