@@ -40,15 +40,24 @@ jobs:
           git add README.md
           git commit -m "Add new line to README.md with date and time"
 
+          # Check git status and log to ensure commit happened
+          git status
+          git log --oneline
+
           # Push the branch to remote
           git push -u origin feature-branch-$DATE
 
-      # Step 4: Ensure the latest branch references are fetched
+      # Step 4: Ensure the latest branches are fetched
       - name: Fetch latest branches
         run: |
           git fetch --all
 
-      # Step 5: Create Pull Request using gh CLI
+      # Step 5: Check remote branches
+      - name: List remote branches
+        run: |
+          git branch -r
+
+      # Step 6: Create Pull Request using gh CLI
       - name: Create Pull Request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
