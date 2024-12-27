@@ -51,20 +51,26 @@ jobs:
       - name: Fetch latest branches
         run: |
           git fetch --all
-
+          
       # Step 5: Check remote branches to verify push
       - name: List remote branches
         run: |
           git branch -r
 
-      # Step 6: Verify commit on feature branch and compare with main
+      # Step 6: Ensure the feature branch exists on remote
+      - name: Ensure feature branch exists
+        run: |
+          git fetch origin feature-branch-$DATE
+          git branch -r
+
+      # Step 7: Check commit differences between main and feature branch
       - name: Check commit differences between main and feature branch
         run: |
-          git checkout main
-          git pull origin main
-          git log feature-branch-$DATE..main --oneline
+          git fetch origin main  # Fetch the latest main branch
+          git checkout feature-branch-$DATE  # Ensure we're on the feature branch
+          git log --oneline main..feature-branch-$DATE  # Show the difference in commits
 
-      # Step 7: Create Pull Request using gh CLI
+      # Step 8: Create Pull Request using gh CLI
       - name: Create Pull Request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
