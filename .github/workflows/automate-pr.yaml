@@ -1,3 +1,6 @@
+It looks like I made a mistake with the syntax. Let's correct that by using job outputs instead of step outputs. Here's the updated workflow:
+
+```yaml
 name: Create PR with gh CLI
 
 on:
@@ -11,8 +14,8 @@ permissions:
 jobs:
   create-pr:
     runs-on: ubuntu-latest
-    env:
-      DATE: ${{ steps.set-date.outputs.date }}  # Set DATE as a job-level environment variable
+    outputs:
+      date: ${{ steps.set-date.outputs.date }}
     steps:
       # Step 1: Checkout the repository
       - name: Checkout repository
@@ -36,6 +39,7 @@ jobs:
       - name: Create and push new branch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
+          DATE: ${{ needs.create-pr.outputs.date }}  # Use job output
         run: |
           # Debugging: Print out the date value
           echo "Branch Date: $DATE"
@@ -66,23 +70,25 @@ jobs:
           git branch -r
 
       # Step 7: Ensure feature branch is fetched correctly
-      - name: Ensure feature branch exists
+        env:
+          DATE: ${{ needs.create-pr.outputs.date }}  # Use job output
         run: |
           echo "Feature branch: feature-branch-$DATE"
           git fetch origin feature-branch-$DATE
           git branch -r
 
       # Step 8: Check commit differences between main and feature branch
-      - name: Check commit differences between main and feature branch
+        env:
+          DATE: ${{ needs.create-pr.outputs.date }}  # Use job output
         run: |
           git fetch origin main  # Fetch the latest main branch
           git checkout feature-branch-$DATE  # Ensure we're on the feature branch
           git log --oneline main..feature-branch-$DATE  # Show the difference in commits
 
       # Step 9: Create Pull Request using gh CLI
-      - name: Create Pull Request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
+          DATE: ${{ needs.create-pr.outputs.date }}  # Use job output
         run: |
           # Create the PR with gh CLI
           gh pr create \
@@ -90,3 +96,6 @@ jobs:
             --body "This PR adds a new line to the README.md file with the date and time: $DATE. Branch got created from storyblock." \
             --head feature-branch-$DATE \
             --base main
+```
+
+This should ensure that the `DATE` variable is correctly set and used throughout the workflow. Let me know if this resolves the issue!
