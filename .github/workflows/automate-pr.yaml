@@ -52,12 +52,19 @@ jobs:
         run: |
           git fetch --all
 
-      # Step 5: Check remote branches
+      # Step 5: Check remote branches to verify push
       - name: List remote branches
         run: |
           git branch -r
 
-      # Step 6: Create Pull Request using gh CLI
+      # Step 6: Verify commit on feature branch and compare with main
+      - name: Check commit differences between main and feature branch
+        run: |
+          git checkout main
+          git pull origin main
+          git log feature-branch-$DATE..main --oneline
+
+      # Step 7: Create Pull Request using gh CLI
       - name: Create Pull Request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
