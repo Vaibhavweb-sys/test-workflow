@@ -31,7 +31,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
         run: |
           # Get the current date and time
-          DATE=$(date +"%Y-%m-%d %H:%M:%S")
+          DATE=$(date +"%Y-%m-%d-%H-%M-%S")
           # Create a new feature branch with the current date
           git checkout -b feature-branch-$DATE
 
@@ -48,7 +48,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN here
         run: |
           # Get the current date and time for the PR body
-          DATE=$(date +"%Y-%m-%d %H:%M:%S")
+          DATE=$(date +"%Y-%m-%d-%H-%M-%S")
           
           gh pr create \
             --title "Update README.md with date and time" \
