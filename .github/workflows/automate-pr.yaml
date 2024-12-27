@@ -55,6 +55,8 @@ jobs:
 
       # Step 5: Create Pull Request using gh CLI
       - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN for the gh CLI
         run: |
           DATE=${{ env.date }}  # Retrieve date from environment variable
           gh pr create \
