@@ -6,8 +6,8 @@ on:
       - main
     paths:
       - 'app/**'
-      - Dockerfile
-      - storyblok-published-log
+      - 'Dockerfile'
+      - 'storyblok-published-log'
   workflow_dispatch:
 
 env:
