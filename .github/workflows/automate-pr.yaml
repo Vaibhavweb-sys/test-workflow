@@ -16,10 +16,11 @@ jobs:
     steps:
       # Step 1: Checkout the repository
       - name: Checkout repository
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608  # v4.1.0
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.AUTOMATE_PR }}
           fetch-depth: 0
+
       # Step 2: Set the date
       - name: Set date
         id: set-date
@@ -51,11 +52,11 @@ jobs:
       # Step 5: Create Pull Request using gh CLI
       - name: Create Pull Request
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.AUTOMATE_PR }}
         run: |
           DATE=${{ env.date }}  # Retrieve date from environment variable
           gh pr create \
-            --title "Update storyblok-published-log  with date and time" \
-            --body "Story:published: storyblok cms on $DATE" \
+            --title "Update storyblok-published-log with date and time" \
+            --body "Story published from storyblok cms on $DATE" \
             --head feature-branch-$DATE \
             --base main
