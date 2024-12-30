@@ -46,7 +46,7 @@ jobs:
           git commit -m "Add log to storyblok-published-log"
 
           # Push the branch to remote
-          git push -u origin feature-branch-$DATE
+          git push -f origin feature-branch-$DATE
 
       # Step 5: Create Pull Request using gh CLI
       - name: Create Pull Request
