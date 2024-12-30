@@ -16,16 +16,15 @@ jobs:
     steps:
       # Step 1: Checkout the repository
       - name: Checkout repository
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608  # v4.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-
       # Step 2: Set the date
       - name: Set date
         id: set-date
         run: echo "date=$(date +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_ENV
-
+        
       # Step 3: Configure git user name and email
       - name: Configure Git user
         run: |
@@ -41,14 +40,10 @@ jobs:
           # Create a new feature branch with the current date
           git checkout -b feature-branch-$DATE
 
-          # Add a new line to README.md
-          echo "Branch got created from storyblock on $DATE" >> README.md
-          git add README.md
-          git commit -m "Add new line to README.md with date and time"
-
-          # Check git status and log to ensure commit happened
-          git status
-          git log --oneline
+          # Add a publish log to storyblok-published-log file
+          echo "Branch got created from storyblock cms on $DATE" >> storyblok-published-log
+          git add storyblok-published-log
+          git commit -m "Add log to storyblok-published-log"
 
           # Push the branch to remote
           git push -u origin feature-branch-$DATE
@@ -56,11 +51,11 @@ jobs:
       # Step 5: Create Pull Request using gh CLI
       - name: Create Pull Request
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Set GH_TOKEN for the gh CLI
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           DATE=${{ env.date }}  # Retrieve date from environment variable
           gh pr create \
-            --title "Update README.md with date and time" \
-            --body "This PR adds a new line to the README.md file with the date and time: $DATE. Branch got created from storyblock." \
+            --title "Update storyblok-published-log  with date and time" \
+            --body "Story:published: storyblok cms on $DATE" \
             --head feature-branch-$DATE \
             --base main
