@@ -41,7 +41,7 @@ jobs:
           git checkout -b feature-branch-$DATE
 
           # Add a publish log to storyblok-published-log file
-          echo "Branch got created from storyblock cms on $DATE" >> storyblok-published-log
+          echo "Story got published from storyblock cms on $DATE " >> storyblok-published-log
           git add storyblok-published-log
           git commit -m "Add log to storyblok-published-log"
 
